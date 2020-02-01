@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        body {
+            text-align: center;
+        }
+        .grid {
+            display: inline-block;
+            border: 1px solid black;
+        }
+        .row {
+            display: flex;
+        }
+        .col {
+            width: 15px;
+            height: 15px;
+        }
+        .walls {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            border: 1px solid rgba(0, 0, 0, 0);
+        }
+        .walls::before,
+        .walls::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: black;
+        }
+        .walls::before {
+            top: -2px;
+            left: -2px;
+        }
+        .walls::after {
+            right: -2px;
+            bottom: -2px;
+        }
+        .bg-white { background-color: white;}
+        .bg-red { background-color: red;}
+        .bg-orange { background-color: orange; }
+        .bg-lightblue { background-color: lightblue; }
+        .bg-gray { background-color: gray; }
+        .walls.border-top { border-top: 1px solid black; }
+        .walls.border-bottom { border-bottom: 1px solid black; }
+        .walls.border-left { border-left: 1px solid black; }
+        .walls.border-right { border-right: 1px solid black; }
+    </style>
+</head>
+
+<body>
+    <div id="maze">
+        <div class="grid">
+            <div class="row" v-for="row in grid">
+                <div class="col" v-for="col in row" :class="getClassOf(col)">
+                    <div class="walls" :class="getWallsClassOf(col)"></div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <button @click="generator">generator</button>
+            <button @click="resolve">resolve</button>
+        </div>
+    </div>
+    <script src="maze.js"></script>
+    <script src="dfs_generator.js"></script>
+    <script src="dfs_resolve.js"></script>
+    <script>
+        const maze = new Maze(30, 30)
+
+        new Vue({
+            el: '#maze',
+            data: {
+                grid: maze.grid
+            },
+            methods: {
+                getClassOf(col) {
+                    return ['bg-' + col.color]
+                },
+                getWallsClassOf(col) {
+                    return [
+                        col.borderTop ? 'border-top' : '',
+                        col.borderBottom ? 'border-bottom' : '',
+                        col.borderLeft ? 'border-left' : '',
+                        col.borderRight ? 'border-right' : '',
+                    ]
+                },
+                generator() {
+                    window.dfs_generator(this.grid)
+                },
+                resolve() {
+                    window.dfs_resolve(this.grid)
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
